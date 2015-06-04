@@ -2,14 +2,8 @@
 #include <openssl/evp.h>
 #include <cassert>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <cstdio>
-#include <iostream>
-#include <sstream>
-
-
 
 const std::string LobKo::MD5Hash::hashName_("md5");
 const static std::uint32_t K_[64] = {0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
@@ -40,96 +34,84 @@ LobKo::MD5Hash::MD5Hash() //:
 //c_(C_),
 //d_(D_) 
 {
-    digest_.reserve(32);
-    //readBuff_ = new char[blockSize_];
-}
-
-LobKo::MD5Hash::MD5Hash(const MD5Hash& orig) {
+    digest_.reserve(16);
 }
 
 LobKo::MD5Hash::~MD5Hash() {
-    //delete [] readBuff_;
+    ;
 }
 
 const std::string& LobKo::MD5Hash::getHashName() const {
     return hashName_;
 }
 
-bool LobKo::MD5Hash::fileHashCalculate(shared_ptr<LobKo::FileMetaData> fileMetaData) {
-    //std:
-    //assert(fileMetaData.get() != 0 && "Pointer is NULL");
-    //TODO control memory Leak
+bool LobKo::MD5Hash::fileHashCalculate(shared_ptr<LobKo::FileMetaData> spFileMetaData) {
+    assert(spFileMetaData.get() && "LobKo::MD5Hash::fileHashCalculate, Pointer is NULL");
+    //TODO control memory Leak, think about RAII
+    
+    using std::uint64_t;
+    uint64_t blocksQuantity = spFileMetaData->getSize() / blockSize_;
 
-    std::uint64_t block512Quantity = fileMetaData->getSize() / blockSize_;
-
-    unsigned char md_value[EVP_MAX_MD_SIZE]; // Hash will be here
+    unsigned char mdValue[EVP_MAX_MD_SIZE]; // Hash will be here
     unsigned int mdLen; // Hash length
 
-    EVP_MD_CTX *mdctx;
-    const EVP_MD *md;
+    OpenSSL_add_all_digests();
+    
+    const EVP_MD *md = EVP_get_digestbyname(getHashName().c_str());
+        if ( md == NULL ) {
 
-    OpenSSL_add_all_digests(); //move to constructor?
-    md = EVP_get_digestbyname(getHashName().c_str());
-
-    if ( md == NULL ) {
-        std::cout << "Unknown message digest" << std::endl;
-        //TODO 
-
+        EVP_cleanup();
         return false;
-        //exit(1);
     }
 
-    mdctx = EVP_MD_CTX_create();
+    EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+    
     EVP_DigestInit_ex(mdctx, md, NULL);
 
-    std::int32_t fileDescriptor = open(fileMetaData->getFullName().c_str(), O_RDONLY);
+    int32_t fileDescriptor = open(spFileMetaData->getFullName().c_str(), O_RDONLY);
     if ( fileDescriptor <= 0 ) {
-        std::cout << "fileDescriptor getting failed" << std::endl;
-        //TODO
+
+        EVP_MD_CTX_destroy(mdctx);
+        EVP_cleanup();
         return false;
-        // exit(1);
     }
 
-    std::tr1::shared_ptr<unsigned char> readBuff(new unsigned char[blockSize_]);
+    shared_ptr<unsigned char> readBuff(new unsigned char[blockSize_]);
     int readLength;
-
-    for ( std::uint64_t i = 0; i < block512Quantity; ++i ) {
+    for ( uint64_t i = 0; i < blocksQuantity; ++i ) {
         readLength = read(fileDescriptor, &(*readBuff), blockSize_);
         if ( readLength != blockSize_ ) {
-            std::cout << "Reading failed" << std::endl;
-            //TODO 
+
+            close(fileDescriptor);
+            EVP_MD_CTX_destroy(mdctx);
+            EVP_cleanup();
             return false;
-            //exit(1);
         }
         EVP_DigestUpdate(mdctx, &(*readBuff), readLength);
     };
 
-    if ( fileMetaData->getSize() != blockSize_ * block512Quantity ) {
-        uint32_t readLastBypes = fileMetaData->getSize() % blockSize_;
+    if ( spFileMetaData->getSize() != blockSize_ * blocksQuantity ) {
+        uint32_t readLastBypes = spFileMetaData->getSize() % blockSize_;
         readLength = read(fileDescriptor, &(*readBuff), readLastBypes);
         if ( readLength != readLastBypes ) {
-            std::cout << "Last Reading is failed" << std::endl;
-            //TODO 
+
+            close(fileDescriptor);
+            EVP_cleanup();
+            EVP_MD_CTX_destroy(mdctx);
             return false;
-            //exit(1);
         }
         EVP_DigestUpdate(mdctx, readBuff.get(), readLength);
     }
-    EVP_DigestFinal_ex(mdctx, md_value, &mdLen);
+    EVP_DigestFinal_ex(mdctx, mdValue, &mdLen);
 
     char str[3] = {0};
     for ( int i = 0; i < mdLen; i++ ) {
-        snprintf(str, 3, "%02x", md_value[i]);
-
+        snprintf(str, 3, "%02x", mdValue[i]);
+        str[2] ='\0'; //For reliability
         digest_.append(str);
-
     }
-    std::cout << "Digest:  " << digest_ << " Name:" << fileMetaData->getFullName() << std::endl;
 
     EVP_MD_CTX_destroy(mdctx);
-
-    /* Call this once before exit. */
-    ////move to destructor?
     close(fileDescriptor);
     EVP_cleanup(); // Cleans after OpenSSL_add_all_digests() OpenSSL_add_all_algorithms() OpenSSL_add_all_ciphers()
 

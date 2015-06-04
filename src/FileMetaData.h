@@ -3,11 +3,12 @@
 
 #include <string>
 #include <tr1/memory>
-#include <stdint.h>
+#include <cstdint>
 #include "AbstractHash.h"
 
 using std::string;
 using std::tr1::shared_ptr;
+using std::uint64_t;
 
 
 namespace LobKo {
@@ -32,7 +33,7 @@ namespace LobKo {
         };
 
         const shared_ptr<AbstractHash> getHash() const;
-        void setHash(shared_ptr<AbstractHash> hash);
+        void setHash(shared_ptr<AbstractHash> spHash);
 
     private:
         string fullName_;

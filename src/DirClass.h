@@ -4,7 +4,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-
 namespace LobKo {
 
     class DirClass {
@@ -22,7 +21,6 @@ namespace LobKo {
 
         DIR* dir_;
     };
-
 }
 
 #endif	/* DIRCLASS_H */

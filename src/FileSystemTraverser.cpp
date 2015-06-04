@@ -1,17 +1,14 @@
+#include <cstring>
 #include <dirent.h>
-#include "FileSystemTraverser.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <cstring>
 #include "DirClass.h"
-#include <iostream>
-#include "AbstractHash.h"
+#include "FileSystemTraverser.h"
+//#include "AbstractHash.h"
 #include "MD5Hash.h"
-#include <cstdio>
 
-LobKo::FileSystemTraverser::FileSystemTraverser(const string& path, const string& fsID, shared_ptr<ErrorsHolder> errHolder) :
-result_(Result::NOERR), mdfHolder_(), fsID_(fsID), errHolder_(errHolder) {
+LobKo::FileSystemTraverser::FileSystemTraverser(const string& path, const string& fsID, shared_ptr<ErrorsHolder> spErrHolder) :
+result_(Result::NOERR), spMetaDataFilesHolder_(), fsID_(fsID), spErrHolder_(spErrHolder) {
     if ( path == "/" ) {
         path_ = path;
     } else if ( path[path.size() - 1] == '/' ) {
@@ -33,16 +30,16 @@ shared_ptr<LobKo::MetaDataFilesHolder> LobKo::FileSystemTraverser::traverse(Resu
     std::string path(path_);
     result_ = Result::NOERR;
 
-    mdfHolder_.reset(new LobKo::MetaDataFilesHolder(fsID_));
+    spMetaDataFilesHolder_.reset(new LobKo::MetaDataFilesHolder(fsID_));
 
     traverse2(path);
 
-    shared_ptr<MetaDataFilesHolder> mdfHolder(mdfHolder_);
-    mdfHolder_.reset();
-    errHolder_.reset();
+    shared_ptr<MetaDataFilesHolder> spMetaDatafilesHolder(spMetaDataFilesHolder_);
+    spMetaDataFilesHolder_.reset();
+    spErrHolder_.reset();
 
     result = result_;
-    return mdfHolder;
+    return spMetaDatafilesHolder;
 }
 
 void LobKo::FileSystemTraverser::traverse2(const string& path) const {
@@ -61,12 +58,12 @@ void LobKo::FileSystemTraverser::traverse2(const string& path) const {
 
         if ( hash->fileHashCalculate(spFile) == false ) {
             result_ = Result::ERR;
-            errHolder_->addErrorPath(spFile->getFullName());
+            spErrHolder_->addErrorPath(spFile->getFullName());
 
             return;
         };
         spFile->setHash(hash);
-        mdfHolder_->add(spFile);
+        spMetaDataFilesHolder_->add(spFile);
 
         return;
     }
@@ -89,11 +86,9 @@ void LobKo::FileSystemTraverser::traverse2(const string& path) const {
                 std::string s((path != "/") ? path : "");
                 s += std::string("/");
                 s += std::string(dir->d_name);
-                std::cout << "Path: " << path << std::endl;
 
                 traverse2(s);
             }
         }
     }
 }
-

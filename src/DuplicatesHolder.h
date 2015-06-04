@@ -26,8 +26,7 @@ namespace LobKo {
         void addPair(const string&, shared_ptr<FileMetaData> spFileMeta);
         const map<string, list<shared_ptr<FileMetaData> > >& getHolder() const;
 
-        void deleteNoDuplicateNode();
-
+        void deleteNodeWithOutDupliactes();
     private:
         DuplicatesHolder(const DuplicatesHolder& orig);
         const DuplicatesHolder& operator=(const DuplicatesHolder& rhs);

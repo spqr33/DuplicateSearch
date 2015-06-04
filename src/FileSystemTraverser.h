@@ -1,10 +1,9 @@
 #ifndef FILESYSTEMTRAVERSER_H
 #define	FILESYSTEMTRAVERSER_H
 
-
-#include<string>
-#include<tr1/memory>
-#include"MetaDataFilesHolder.h"
+#include <string>
+#include <tr1/memory>
+#include "MetaDataFilesHolder.h"
 #include "ErrorHolder.h"
 
 using std::string;
@@ -15,7 +14,7 @@ namespace LobKo {
 
     class FileSystemTraverser {
     public:
-        FileSystemTraverser(const string& path, const string& fsID, shared_ptr<ErrorsHolder> errHolder_);
+        FileSystemTraverser(const string& path, const string& fsID, shared_ptr<ErrorsHolder> spErrHolder_);
         ~FileSystemTraverser();
 
         enum Result {
@@ -29,7 +28,7 @@ namespace LobKo {
             return path_;
         };
 
-        int getLastTraverseResult() const {
+        Result getLastTraverseResult() const {
             return result_;
         };
 
@@ -40,8 +39,8 @@ namespace LobKo {
         void traverse2(const string& path_) const;
 
         mutable Result result_;
-        shared_ptr<MetaDataFilesHolder> mdfHolder_;
-        shared_ptr<ErrorsHolder> errHolder_;
+        shared_ptr<MetaDataFilesHolder> spMetaDataFilesHolder_;
+        shared_ptr<ErrorsHolder> spErrHolder_;
         string path_;
         string fsID_;
     };

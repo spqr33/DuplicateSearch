@@ -17,8 +17,7 @@ const map<string, std::list<shared_ptr<LobKo::FileMetaData> > >& LobKo::Duplicat
     return mapDupHolder_;
 }
 
-void LobKo::DuplicatesHolder::deleteNoDuplicateNode() {
-
+void LobKo::DuplicatesHolder::deleteNodeWithOutDupliactes() {
     typedef map<string, list<shared_ptr<FileMetaData> > >::iterator MapDupIter;
     MapDupIter mIter = mapDupHolder_.begin();
 
@@ -29,13 +28,11 @@ void LobKo::DuplicatesHolder::deleteNoDuplicateNode() {
             ++mIter;
         }
     }
-
 }
 
 void LobKo::PrintDuplicatesHolder(const DuplicatesHolder& dh) {
     using std::cout;
     using std::endl;
-    cout << "PrintDuplicatesHolder()" << endl;
     cout << "Holder Size:" << dh.getHolder().size() << endl;
 
     typedef map<string, std::list<shared_ptr<FileMetaData> > >::const_iterator MapCIter;
@@ -47,7 +44,8 @@ void LobKo::PrintDuplicatesHolder(const DuplicatesHolder& dh) {
         std::list<shared_ptr<FileMetaData> >::const_iterator lIter = iter->second.begin();
 
         for (; lIter != iter->second.end(); ++lIter ) {
-            cout << "\t\tSize:" << (*lIter)->getSize() << " ID: " << (*lIter)->getFsID() << " Name: " << (*lIter)->getFullName() << endl;
+            cout << "\t\tSize:" << (*lIter)->getSize() << " ID: " <<\
+                    (*lIter)->getFsID() << " Name: " << (*lIter)->getFullName() << endl;
         }
     }
 }

@@ -6,14 +6,15 @@
 #include <string>
 #include <sys/stat.h>
 #include <errno.h>
+#include <iostream>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
 using std::cout;
 using std::endl;
-using namespace LobKo;
 using std::tr1::shared_ptr;
 using std::string;
+using namespace LobKo;
 
 /**
  * 
@@ -29,7 +30,7 @@ int main(int argc, char** argv) {
             ("help", "produce help message")
             ("search-path, p", po::value<string>(&searchPath), "Start finding here")
             ("label, l", po::value<string>(&label), "Set label")
-            ("save-duplicates-path, S", po::value<string>(&SaveDuplicatesPath), "Path to XML file");
+            ("save-duplicates-path, S", po::value<string>(&SaveDuplicatesPath), "Path to XML file. The feature haven't implemented yet. Please omit it.");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -49,14 +50,14 @@ int main(int argc, char** argv) {
     }
 
     if ( !vm.count("label") ) {
-        cout << "Please, set the mark" << endl;
+        cout << "Please, set a label" << endl;
         cout << desc << "\n";
 
         return EXIT_FAILURE;
     }
 
-    shared_ptr<struct stat> statbuf(new struct stat);
-    if ( lstat(searchPath.c_str(), statbuf.get()) < 0 ) {
+    shared_ptr<struct stat> spStatBuf(new struct stat);
+    if ( lstat(searchPath.c_str(), spStatBuf.get()) < 0 ) {
         cout << progName << ": " << strerror(errno) << endl;
 
         return EXIT_FAILURE;
@@ -65,17 +66,17 @@ int main(int argc, char** argv) {
     shared_ptr<ErrorsHolder> spErrorsHolder(new ErrorsHolder());
     FileSystemTraverser::Result traverseResult;
     FileSystemTraverser traverser(searchPath, label, spErrorsHolder);
-    shared_ptr<MetaDataFilesHolder> spMdfh = traverser.traverse(traverseResult);
+    shared_ptr<MetaDataFilesHolder> sMetaDataFilesHolder = traverser.traverse(traverseResult);
 
     if ( traverseResult == FileSystemTraverser::Result::ERR ) {
-        cout << "Error occurred while traversing. Check ErrorHolder." << endl;
+        cout << "An error occurred while traversing. Check ErrorHolder." << endl;
     }
-    spMdfh->sort(CompareBySize());
+    sMetaDataFilesHolder->sort(CompareBySize());
 
-    shared_ptr<SameSizeFileHolder> spSsfh = spMdfh->getSameSizes();
-    shared_ptr<DuplicatesHolder> spDh = spSsfh->getDuplicates(AbstractHash::Algo::MD5);
+    shared_ptr<SameSizeFileHolder> spSameSizeFileHolder = sMetaDataFilesHolder->getSameSizes();
+    shared_ptr<DuplicatesHolder> spDuplicatesHolder = spSameSizeFileHolder->getDuplicates(AbstractHash::Algo::MD5);
 
-    PrintDuplicatesHolder(*spDh);
+    PrintDuplicatesHolder(*spDuplicatesHolder);
 
     return 0;
 }

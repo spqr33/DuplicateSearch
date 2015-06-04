@@ -1,17 +1,16 @@
 #ifndef METADATAFILESHOLDER_H
 #define	METADATAFILESHOLDER_H
 
+#include <list>
+#include <string>
 #include <vector>
 #include <tr1/memory>
 #include "FileMetaData.h"
 #include "SameSizeFileHolder.h"
-//#include "FileSystemTraverser.h"
-#include <iostream>
-#include <list>
 
 using std::tr1::shared_ptr;
 using std::vector;
-
+using std::string;
 
 namespace LobKo {
 
@@ -20,12 +19,11 @@ namespace LobKo {
 
     class MetaDataFilesHolder {
     public:
-        //typedef bool Compare(const shared_ptr<LobKo::FileMetaData>, const shared_ptr<LobKo::FileMetaData>);
-        explicit MetaDataFilesHolder(const string& fsID);
+         explicit MetaDataFilesHolder(const string& fsID);
         ~MetaDataFilesHolder();
 
         enum MergeRes {
-            EQUAL_FS_ID = -2, SELF_ASSING, OK
+            EQUAL_FS_ID = -2, SELF_MERGED, OK
         };
 
         inline void add(shared_ptr<FileMetaData> file);
@@ -56,10 +54,9 @@ namespace LobKo {
     }; // end class MetaDataFilesHolder
 
     struct CompareBySize {
-
         bool operator()(const shared_ptr<LobKo::FileMetaData> left, const shared_ptr<LobKo::FileMetaData> right) {
             return left->getSize() < right->getSize();
-        }
+        };
     };
 
     void PrintMetaDataFilesHolder(const MetaDataFilesHolder& mdfh);
