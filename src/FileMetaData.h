@@ -20,9 +20,12 @@ namespace LobKo {
     class FileMetaData {
     public:
         FileMetaData(const string& fullName, const uint64_t size, const string& fsID);
-        ~FileMetaData();
+        virtual ~FileMetaData();
 
-        uint64_t getSize() const {
+//        uint64_t getSize() {
+//            return size_;
+//        };
+        const uint64_t& getSize() const {
             return size_;
         };
 
