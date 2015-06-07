@@ -4,11 +4,13 @@
 #include <list>
 #include <string>
 #include <vector>
-#include <tr1/memory>
+//#include <tr1/memory>
+#include <memory>
 #include "FileMetaData.h"
 #include "SameSizeFileHolder.h"
 
-using std::tr1::shared_ptr;
+//using std::tr1::shared_ptr;
+using std::shared_ptr;
 using std::vector;
 using std::string;
 

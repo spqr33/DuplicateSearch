@@ -2,10 +2,12 @@
 #define	MD5HASH_H
 
 #include <cstdint>
-#include <tr1/memory>
+//#include <tr1/memory>
+#include <memory>
 #include "AbstractHash.h"
 
-using std::tr1::shared_ptr;
+//using std::tr1::shared_ptr;
+using std::shared_ptr;
 using std::string;
 using std::uint32_t;
 

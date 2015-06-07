@@ -2,10 +2,12 @@
 #define	ABSTRACTHASH_H
 
 #include <string>
-#include <tr1/memory>
+//#include <tr1/memory>
+#include <memory>
 #include "FileMetaData.h"
 
-using std::tr1::shared_ptr;
+//using std::tr1::shared_ptr;
+using std::shared_ptr;
 using std::string;
 
 namespace LobKo {

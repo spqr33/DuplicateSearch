@@ -2,12 +2,14 @@
 #define	FILEMETADATA_H
 
 #include <string>
-#include <tr1/memory>
+//#include <tr1/memory>
+#include <memory>
 #include <cstdint>
 #include "AbstractHash.h"
 
 using std::string;
-using std::tr1::shared_ptr;
+//using std::tr1::shared_ptr;
+using std::shared_ptr;
 using std::uint64_t;
 
 

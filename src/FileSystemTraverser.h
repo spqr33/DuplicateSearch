@@ -2,12 +2,14 @@
 #define	FILESYSTEMTRAVERSER_H
 
 #include <string>
-#include <tr1/memory>
+//#include <tr1/memory>
+#include <memory>
 #include "MetaDataFilesHolder.h"
 #include "ErrorHolder.h"
 
 using std::string;
-using std::tr1::shared_ptr;
+//using std::tr1::shared_ptr;
+using std::shared_ptr;
 using LobKo::MetaDataFilesHolder;
 
 namespace LobKo {

@@ -12,7 +12,7 @@ namespace po = boost::program_options;
 
 using std::cout;
 using std::endl;
-using std::tr1::shared_ptr;
+//using std::tr1::shared_ptr;
 using std::string;
 using namespace LobKo;
 
