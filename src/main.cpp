@@ -21,7 +21,6 @@ using std::string;
 using std::shared_ptr;
 using namespace LobKo;
 
-
 /**
  * 
  */
@@ -31,13 +30,16 @@ int main(int argc, char** argv) {
     string searchPath;
     string label;
     string saveDuplicatesToThisFile;
-
+    string saveErrorsToThisFile;
+    string saveErrorsDefaultFile("dublicate_serach_error.xml");
+    
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")
             ("search-path, p", po::value<string>(&searchPath), "Start finding here")
             ("label, l", po::value<string>(&label), "Set label")
-            ("save-duplicates-to, S", po::value<string>(&saveDuplicatesToThisFile), "Path to XML file.");
+            ("save-duplicates-to, S", po::value<string>(&saveDuplicatesToThisFile), "Path to XML file.")
+            ("save-errors-to,E", po::value<string>(&saveErrorsToThisFile)->default_value(saveErrorsDefaultFile), "errors file.");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
