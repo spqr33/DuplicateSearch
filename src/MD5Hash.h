@@ -6,6 +6,30 @@
 #include <memory>
 #include "AbstractHash.h"
 
+/////////////////
+#include <boost/serialization/nvp.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include "MD5Hash.h"
+
+///
+
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+//#include "FileMetaDataSerializable.h"
+#include <boost/serialization/shared_ptr.hpp>
+/////
+
+
+
+
 //using std::tr1::shared_ptr;
 using std::shared_ptr;
 using std::string;
@@ -21,6 +45,7 @@ namespace LobKo {
         virtual bool fileHashCalculate(shared_ptr<FileMetaData> spFileMetaData);
 
         //TODO we Have to return string& instead of string
+
         virtual const string getDigest() const {
             return digest_;
         };
@@ -42,6 +67,15 @@ namespace LobKo {
         static const uint32_t C_ = 0x98badcfe;
         static const uint32_t D_ = 0x10325476;
         //void* readBuff_;
+
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int /* file_version */) {
+            ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbstractHash);
+            ar & BOOST_SERIALIZATION_NVP(digest_);
+            ;
+        }
     };
 }
 #endif	/* MD5HASH_H */
