@@ -8,6 +8,10 @@
 #include <errno.h>
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <fstream>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/nvp.hpp>
+
 namespace po = boost::program_options;
 
 using std::cout;
@@ -16,41 +20,6 @@ using std::endl;
 using std::string;
 using namespace LobKo;
 
-#include <fstream>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include "FileMetaDataSerializable.h"
-#include <boost/serialization/shared_ptr.hpp>
-#include "MD5Hash.h"
-
-///
-
-#include <boost/serialization/nvp.hpp>
-#include <boost/serialization/utility.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/version.hpp>
-#include <boost/serialization/assume_abstract.hpp>
-
-/////
-
-void testSerialization() {
-    std::ofstream ofs("filename.xml");
-    using LobKo::FileMetaDataSerializable;
-    //FileMetaDataSerializable f("/home/s/Projects/My/c++/DuplicateSearch/dist/Debug/GNU-Linux-x86/filename", 1667, "Disk2");
-    shared_ptr<AbstractHash> spHash(new MD5Hash());
-    shared_ptr<FileMetaData> spFileMetaData(new FileMetaDataSerializable("/home/s/Projects/My/c++/DuplicateSearch/dist/Debug/GNU-Linux-x86/filename.xml.2", 376, "Disk2"));
-    spHash->fileHashCalculate(spFileMetaData);
-    spFileMetaData->setHash(spHash);
-
-
-    //boost::archive::text_oarchive _archive(ofs);
-    boost::archive::xml_oarchive _archive(ofs);
-    //BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractHash);
-    _archive.register_type(static_cast<FileMetaDataSerializable*> (NULL));
-    //_archive.register_type(static_cast<MD5Hash*> (NULL));
-    _archive << BOOST_SERIALIZATION_NVP(spFileMetaData);
-};
 
 /**
  * 
@@ -132,7 +101,7 @@ int main(int argc, char** argv) {
 
     boost::archive::xml_oarchive _archive(outputDuplicatesFile.is_open() ? outputDuplicatesFile : cout);
     //BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractHash);
-    _archive.register_type(static_cast<FileMetaDataSerializable*> (NULL));
+    //_archive.register_type(static_cast<FileMetaDataSerializable*> (NULL));
     //_archive.register_type(static_cast<MD5Hash*> (NULL));
     _archive << BOOST_SERIALIZATION_NVP(spDuplicatesHolder);
 
