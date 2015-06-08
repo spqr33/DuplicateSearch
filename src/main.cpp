@@ -32,13 +32,14 @@ int main(int argc, char** argv) {
     string label;
     string saveDuplicatesToThisFile;
 
+    
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")
-            ("search-path, p", po::value<string>(&searchPath), "Start finding here")
-            ("label, l", po::value<string>(&label), "Set label")
-            ("save-duplicates-to, S", po::value<string>(&saveDuplicatesToThisFile), "Path to XML file.");
-
+            ("search-path,p", po::value<string>(&searchPath), "Start finding here")
+            ("label,l", po::value<string>(&label), "Set label")
+            ("save-duplicates-to,s", po::value<string>(&saveDuplicatesToThisFile), "Path to result XML file.");
+           
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
