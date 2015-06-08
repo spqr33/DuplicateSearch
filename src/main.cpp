@@ -11,8 +11,8 @@
 namespace po = boost::program_options;
 
 using std::cout;
+using std::cerr;
 using std::endl;
-//using std::tr1::shared_ptr;
 using std::string;
 using namespace LobKo;
 
@@ -60,21 +60,21 @@ int main(int argc, char** argv) {
     string progName(*argv);
     string searchPath;
     string label;
-    string SaveDuplicatesPath;
+    string saveDuplicatesToThisFile;
 
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")
             ("search-path, p", po::value<string>(&searchPath), "Start finding here")
             ("label, l", po::value<string>(&label), "Set label")
-            ("save-duplicates-path, S", po::value<string>(&SaveDuplicatesPath), "Path to XML file. The feature haven't implemented yet. Please omit it.");
+            ("save-duplicates-to, S", po::value<string>(&saveDuplicatesToThisFile), "Path to XML file.");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
 
     if ( vm.count("help") ) {
-        cout << desc << "\n";
+        cerr << desc << "\n";
 
         return EXIT_FAILURE;
     }
@@ -93,11 +93,25 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
+    if ( !vm.count("save-duplicates-to") ) {
+        cerr << "Please, specify filename to save results" << endl;
+        cout << desc << "\n";
+
+        return EXIT_FAILURE;
+    }
+
     shared_ptr<struct stat> spStatBuf(new struct stat);
     if ( lstat(searchPath.c_str(), spStatBuf.get()) < 0 ) {
         cout << progName << ": " << strerror(errno) << endl;
 
         return EXIT_FAILURE;
+    }
+
+    std::ofstream outputDuplicatesFile(saveDuplicatesToThisFile.c_str());
+    if ( !outputDuplicatesFile.is_open() ) {
+        cerr << "Can't open the file " << saveDuplicatesToThisFile << " for writting" << endl;
+
+        exit(EXIT_FAILURE);
     }
 
     shared_ptr<ErrorsHolder> spErrorsHolder(new ErrorsHolder());
@@ -115,20 +129,18 @@ int main(int argc, char** argv) {
 
     //PrintDuplicatesHolder(*spDuplicatesHolder);
 
-    std::ofstream ofs("filename.xml");
-    boost::archive::xml_oarchive _archive(ofs.is_open() ? ofs : std::cout);
-    if ( !ofs.is_open() ) {
-        ofs.clear();
-    }
+
+    boost::archive::xml_oarchive _archive(outputDuplicatesFile.is_open() ? outputDuplicatesFile : cout);
     //BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractHash);
     _archive.register_type(static_cast<FileMetaDataSerializable*> (NULL));
     //_archive.register_type(static_cast<MD5Hash*> (NULL));
     _archive << BOOST_SERIALIZATION_NVP(spDuplicatesHolder);
-    ofs.clear();
-    ofs.close();
 
 
+
+    outputDuplicatesFile.clear();
+    outputDuplicatesFile.close();
     //ofs will close at this point
-    return 0;
+    return EXIT_SUCCESS;
 }
 
