@@ -9,6 +9,30 @@
 #include "FileMetaData.h"
 #include "SameSizeFileHolder.h"
 
+#include <boost/serialization/nvp.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+#include "MD5Hash.h"
+
+///
+
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+//#include "FileMetaDataSerializable.h"
+#include <boost/serialization/shared_ptr.hpp>
+/////
+
+
+
 using std::list;
 using std::string;
 using std::map;
@@ -34,6 +58,16 @@ namespace LobKo {
         const DuplicatesHolder& operator=(const DuplicatesHolder& rhs);
 
         map<string, list<shared_ptr<FileMetaData> > > mapDupHolder_;
+
+    private:
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int /* file_version */) {
+            //            BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractHash);
+            ar & BOOST_SERIALIZATION_NVP(mapDupHolder_);
+        };
+
     };
 
     void PrintDuplicatesHolder(const DuplicatesHolder& dh);

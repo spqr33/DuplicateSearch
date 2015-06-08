@@ -27,8 +27,8 @@ using std::uint64_t;
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+//#include <boost/archive/text_oarchive.hpp>
+//#include <boost/archive/text_iarchive.hpp>
 //#include "FileMetaDataSerializable.h"
 #include <boost/serialization/shared_ptr.hpp>
 /////
@@ -41,7 +41,7 @@ namespace LobKo {
 
     class FileMetaData {
         friend class boost::serialization::access;
-        friend class FileMetaDataSerializable;
+        //friend class FileMetaDataSerializable;
     public:
         FileMetaData(const string& fullName, const uint64_t size, const string& fsID);
         virtual ~FileMetaData();
