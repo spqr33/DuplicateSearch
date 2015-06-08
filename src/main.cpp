@@ -17,7 +17,7 @@ using std::string;
 using namespace LobKo;
 
 #include <fstream>
-//#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include "FileMetaDataSerializable.h"
@@ -27,10 +27,10 @@ void testSerialization(){
     using LobKo::FileMetaDataSerializable;
     FileMetaDataSerializable f("/home/s/Projects/My/c++/DuplicateSearch/dist/Debug/GNU-Linux-x86/filename", 1667, "Disk2");
     
-    boost::archive::text_oarchive _archive(ofs);
-    //boost::archive::xml_oarchive _archive(ofs);
-    
-    _archive << f;
+    //boost::archive::text_oarchive _archive(ofs);
+    boost::archive::xml_oarchive _archive(ofs);
+    //BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractHash);
+    _archive << BOOST_SERIALIZATION_NVP(f);
 };
 
 /**

@@ -25,19 +25,16 @@ namespace LobKo {
 
         template<class Archive>
         void serialize(Archive & ar, const unsigned int /* file_version */) {
-            ar & BOOST_SERIALIZATION_NVP(getFullName());
-            ar & BOOST_SERIALIZATION_NVP(getSize());
-           
-            //ar & BOOST_SERIALIZATION_NVP(getHash());
-            ar & BOOST_SERIALIZATION_NVP(getFsID());
-        }
+            ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(FileMetaData);
+            //ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LobKo::FileMetaData);
+        };
 
     public:
         FileMetaDataSerializable(const string& fullName, const uint64_t size, const string& fsID);
         virtual ~FileMetaDataSerializable();
-        
+
     };
-        
+
 };
 #endif	/* FILEMETADATASERIALIZABLE_H */
 
