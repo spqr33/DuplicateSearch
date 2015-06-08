@@ -2,7 +2,7 @@
 #include "AbstractHash.h"
 #include "DuplicatesHolder.h"
 #include "ErrorHolder.h"
-#include <tr1/memory>
+#include <memory>
 #include <string>
 #include <sys/stat.h>
 #include <errno.h>
@@ -18,6 +18,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::string;
+using std::shared_ptr;
 using namespace LobKo;
 
 
@@ -98,18 +99,10 @@ int main(int argc, char** argv) {
 
     //PrintDuplicatesHolder(*spDuplicatesHolder);
 
-
-    boost::archive::xml_oarchive _archive(outputDuplicatesFile.is_open() ? outputDuplicatesFile : cout);
-    //BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractHash);
-    //_archive.register_type(static_cast<FileMetaDataSerializable*> (NULL));
-    //_archive.register_type(static_cast<MD5Hash*> (NULL));
+    boost::archive::xml_oarchive _archive(outputDuplicatesFile);
     _archive << BOOST_SERIALIZATION_NVP(spDuplicatesHolder);
-
-
 
     outputDuplicatesFile.clear();
     outputDuplicatesFile.close();
-    //ofs will close at this point
     return EXIT_SUCCESS;
 }
-
