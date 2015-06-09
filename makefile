@@ -45,7 +45,13 @@ include makedata/Makefile-${CONF}.mk
 
 #Clean
 clean:  ${JUSTDOIT}
-	${RM} -r ${BUILDDIR}/${CONF}
-	${RM} ${DESTDIR}/${CONF}/${ARCH}/${PROGNAME}
+	@if [ -d ${BUILDDIR}/${CONF} ];\
+	then \
+	    ${RM} -r ${BUILDDIR}/${CONF} ;\
+	fi
+	@if [ -f ${DESTDIR}/${CONF}/${ARCH}/${PROGNAME} ];\
+	then \
+	    ${RM} ${DESTDIR}/${CONF}/${ARCH}/${PROGNAME} ;\
+	fi
 
 .yesJustDoIt:
