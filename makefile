@@ -14,6 +14,7 @@ CONF=${DEFAULTCONF}
 
 #Environment
 MKDIR=mkdir
+RM=rm
 CC=gcc
 CCC=g++
 CXX=g++
@@ -35,7 +36,16 @@ BUILDDIR=bld
 #Vars will load from makedata/Makefile-Objectives.mk
 include makedata/Makefile-Objectives.mk
 
-build:
-	${MAKE}  -f makedata/Makefile-${CONF}.mk ${DESTDIR}/${CONF}/${ARCH}/${PROGNAME}
+JUSTDOIT=.yesJustDoIt
 
-#include makedata/Makefile-${CONF}.mk
+#build:	${DOIT}
+#	${MAKE}  -f makedata/Makefile-${CONF}.mk ${DESTDIR}/${CONF}/${ARCH}/${PROGNAME}
+
+include makedata/Makefile-${CONF}.mk
+
+#Clean
+clean:  ${JUSTDOIT}
+	${RM} -r ${BUILDDIR}/${CONF}
+	${RM} ${DESTDIR}/${CONF}/${ARCH}/${PROGNAME}
+
+.yesJustDoIt:
