@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
     string label;
     string saveDuplicatesToThisFile;
     string saveErrorsToThisFile;
-    string saveErrorsDefaultFile("dublicate_serach_error.xml");
+    string saveErrorsDefaultFile("dublicate_search_error.xml");
     
     po::options_description desc("Allowed options");
     desc.add_options()
