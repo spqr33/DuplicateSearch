@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     string saveDuplicatesToThisFile;
     string saveErrorsToThisFile;
     string saveErrorsDefaultFile("dublicate_search_error.xml");
-    
+
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")
@@ -85,6 +85,12 @@ int main(int argc, char** argv) {
 
         exit(EXIT_FAILURE);
     }
+    std::ofstream outputErrorsFile(saveErrorsToThisFile.c_str());
+    if ( !outputErrorsFile.is_open() ) {
+        cerr << "Can't open the file " << saveErrorsToThisFile << " for writing" << endl;
+
+        exit(EXIT_FAILURE);
+    }
 
     shared_ptr<ErrorsHolder> spErrorsHolder(new ErrorsHolder());
     FileSystemTraverser::Result traverseResult;
@@ -92,7 +98,10 @@ int main(int argc, char** argv) {
     shared_ptr<MetaDataFilesHolder> sMetaDataFilesHolder = traverser.traverse(traverseResult);
 
     if ( traverseResult == FileSystemTraverser::Result::ERR ) {
-        cout << "An error occurred while traversing. Check ErrorHolder." << endl;
+        cerr << "An error occurred while traversing. Check ErrorHolder." << endl;
+        
+        boost::archive::xml_oarchive errorsArchive(outputErrorsFile);
+        errorsArchive << BOOST_SERIALIZATION_NVP(spErrorsHolder);
     }
     sMetaDataFilesHolder->sort(CompareBySize());
 
@@ -103,6 +112,7 @@ int main(int argc, char** argv) {
 
     boost::archive::xml_oarchive _archive(outputDuplicatesFile);
     _archive << BOOST_SERIALIZATION_NVP(spDuplicatesHolder);
+
 
     outputDuplicatesFile.clear();
     outputDuplicatesFile.close();
