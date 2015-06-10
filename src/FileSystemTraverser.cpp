@@ -47,6 +47,7 @@ void LobKo::FileSystemTraverser::traverse2(const string& path) const {
 
     if ( lstat(path.c_str(), &(*statbuf)) < 0 ) {
         result_ = Result::ERR;
+        spErrHolder_->addErrorPath(path.c_str());
 
         return;
     }
@@ -75,6 +76,7 @@ void LobKo::FileSystemTraverser::traverse2(const string& path) const {
 
         if ( dirStream.getDir() == NULL ) { //Directory unavailable
             //TODO add this dir into storage of undread files & dirs.
+            spErrHolder_->addErrorPath(path.c_str());
             result_ = Result::ERR;
             return;
         }

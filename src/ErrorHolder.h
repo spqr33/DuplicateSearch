@@ -12,6 +12,11 @@
 #include <list>
 #include <vector>
 
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/string.hpp>
+
 using std::string;
 using std::list;
 using std::vector;
@@ -27,6 +32,13 @@ namespace LobKo {
         const list < string >& getHolder() const;
     private:
         list< string > errorPathList_;
+    private:
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int /* file_version */) {
+            ar & BOOST_SERIALIZATION_NVP(errorPathList_);
+        };
     };
 
     void PrintErrorHolder(const ErrorsHolder * const eh);
