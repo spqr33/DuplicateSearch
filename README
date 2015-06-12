@@ -1,0 +1,26 @@
+General purpose of the program is a searching of duplicates of files.
+Program has NO any warranties, and you can/should/must/may use it AS IS.
+
+You can use this long or oneletter options:
+--help                                  produce help message
+--search-path | -p                      Start finding here
+--label | -l                            Set label
+--save-duplicates-to | -S               Path to XML file.
+--save-errors-to | -E                   Path to errors XML file
+
+
+The program traverses recursively directory tree, starts from --search--path.
+For each file the program calculates MD5 hash (I use OpenSSL library to do it).
+You can implement AbstractHash and use your own hash function.
+If read or access to a file/ directory error occurs,
+it is saved to --save-errors-to file (default is dublicate_search_error.xml).
+
+The --label option will allow to idetify file later.
+
+Program use two boost library, and OpenSSL:
+*) boost::program_options - Parsing command line arguments.
+**) boost::serialization - Serialization class state(Pointers, all STL containers,
+shared_ptr, polymorphic pointers, arrays, etc.) to archive(text, binary, XML).
+program uses XML.
+***) as said above, it used for hash calculating.
+Therefore these libraries must be installed.
