@@ -37,9 +37,9 @@ int main(int argc, char** argv) {
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")
-            ("search-path, p", po::value<string>(&searchPath), "Start finding here")
-            ("label, l", po::value<string>(&label), "Set label")
-            ("save-duplicates-to, S", po::value<string>(&saveDuplicatesToThisFile), "Path to XML file.")
+            ("search-path,p", po::value<string>(&searchPath), "Start finding here")
+            ("label,l", po::value<string>(&label), "Set label")
+            ("save-duplicates-to,S", po::value<string>(&saveDuplicatesToThisFile), "Path to XML file.")
             ("save-errors-to,E", po::value<string>(&saveErrorsToThisFile)->default_value(saveErrorsDefaultFile), "errors file.");
 
 
